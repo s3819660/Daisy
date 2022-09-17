@@ -1,25 +1,10 @@
-package com.company;
-
-import org.w3c.dom.Node;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 public class HamiltonianProblem {
     public static void main(String args[]) {
         ArrayList<Nodes> nodes = new ArrayList<>();
-        Restaurant a = new Restaurant();
-        Restaurant b = new Restaurant();
-        Customer c = new Customer();
-        Customer d = new Customer();
-        Shipper z = new Shipper();
-        nodes.add(a);
-        nodes.add(b);
-        nodes.add(c);
-        nodes.add(d);
+
+
         /*z.listAllPaths(4,nodes,':');*/
 
     }
@@ -74,6 +59,10 @@ class Customer extends Nodes {
     public Restaurant getOrderedRestaurant() {
         return orderedRestaurant;
     }
+
+    public void setOrderedRestaurant(Restaurant orderedRestaurant) {
+        this.orderedRestaurant = orderedRestaurant;
+    }
 }
 class E {
 
@@ -97,48 +86,96 @@ class Shipper extends Nodes {
 
 class HeapAlgo {
     // Prints the array
-    void printArr(int a[], int n)
+    void printArr(Nodes a[], int n)
     {
         for (int i = 0; i < n; i++)
             System.out.print(a[i] + " ");
         System.out.println();
     }
+    static ArrayList<Nodes[]> pathLists = new ArrayList<>();
+    static ArrayList<Nodes[]> filteredNodes = new ArrayList<>();
 
-    // Generating permutation using Heap Algorithm
-    void heapPermutation(int a[], int size, int n)
-    {
-        // if size becomes 1 then prints the obtained
-        // permutation
-        if (size == 1)
-            printArr(a, n);
-
-        for (int i = 0; i < size; i++) {
-            heapPermutation(a, size - 1, n);
-
-            // if size is odd, swap 0th i.e (first) and
-            // (size-1)th i.e (last) element
-            if (size % 2 == 1) {
-                int temp = a[0];
-                a[0] = a[size - 1];
-                a[size - 1] = temp;
-            }
-
-            // If size is even, swap ith
-            // and (size-1)th i.e last element
-            else {
-                int temp = a[i];
-                a[i] = a[size - 1];
-                a[size - 1] = temp;
+    public static void heapsAlgorithm(int n, Nodes[] list) {
+        if (n == 1) {
+            pathLists.add(Arrays.copyOf(list, list.length));
+            System.out.println(Arrays.toString(list));
+        }
+        else {
+            for(int i = 0; i < n; i++) {
+                heapsAlgorithm(n - 1, list);
+                if ( n % 2 == 0) {
+                    Nodes swap = list[i];
+                    list[i] = list[n-1];
+                    list[n-1] = swap;
+                }
+                else {
+                    Nodes swap = list[0];
+                    list[0] = list[n-1];
+                    list[n-1] = swap;
+                }
             }
         }
     }
+     public static ArrayList<Nodes[]> filterData() {
+        int count = 0;
+        int pages = 0;
+         for (Nodes[] nodeChain:pathLists) {
+             for (Nodes node : nodeChain) {
+                 if (node instanceof Customer) {
+                     int index = Arrays.asList(nodeChain).indexOf(node);
+                     int jindex = Arrays.asList(nodeChain).indexOf(((Customer) node).getOrderedRestaurant());
+                     if(index == 0) {
+                         break;}
+                     else {
+                         count++;
+                         System.out.println(count+" this statement khac 0");
+                         if (index > jindex) {
+                             pages++;
+                             filteredNodes.add(nodeChain);
+                             System.out.println(pages +" this statement satisfies both conditions");
+                             break;
+                         }
+//                         pathLists.remove(nodeChain);
+//                         System.out.println(count+" This string is error");
+//                         System.out.println("Line "+ count);
+//                         System.out.println("Customer"+index + " " + "Restaurant"+jindex);
+                     }
+
+//                     pages++;
+//                     System.out.println("Line "+ pages);
+//                     System.out.println("Customer"+index + " " + "Restaurant"+jindex);
+//                    return Arrays.asList(nodeChain).contains(node);
+//                    return Arrays.asList(nodeChain).contains(((Customer) node).getOrderedRestaurant());
+
+                 }
+             }
+         }
+         return filteredNodes;
+     }
+
+
 
     // Driver code
     public static void main(String args[])
     {
         HeapAlgo obj = new HeapAlgo();
-        int a[] = { 1, 2, 3 };
-        obj.heapPermutation(a, a.length, a.length);
+        Restaurant a = new Restaurant();
+        Restaurant b = new Restaurant();
+        Customer c = new Customer();
+        Customer d = new Customer();
+        Shipper z = new Shipper();
+
+
+        Nodes test[] = {a,b,c,d};
+        c.setOrderedRestaurant(a);
+        d.setOrderedRestaurant(b);
+        heapsAlgorithm(test.length,test);
+        filterData();
+        for(int i = 1; i <= filteredNodes.size(); i++) {
+//            System.out.println("Filtered Data");
+            System.out.println("List " + i + ": " + Arrays.toString(filteredNodes.get(i-1)));
+        }
+//        System.out.println(filterData());
     }
 }
 
