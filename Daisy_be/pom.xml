@@ -50,6 +50,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20090211</version>
+		</dependency>
+		<dependency>
+			<groupId>org.daisy.libs</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<!-- Thanks for using https://jar-download.com -->
+
 	</dependencies>
 
 	<build>
