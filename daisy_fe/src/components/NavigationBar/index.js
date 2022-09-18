@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { AppBar, Toolbar, CssBaseline, Typography, Box } from "@mui/material";
+import daisy_logo from '../../assets/daisy_logo.png';
 // import PropTypes from 'prop-types';
 import "./style.css"
 
@@ -11,7 +12,8 @@ function NavigationBar(props) {
     <AppBar position="static" sx={{backgroundColor: "#F9EDAA"}}>
       <CssBaseline />
       <Toolbar >
-        <Typography variant="h4" sx={{color: "black"}}>Daisy</Typography>
+        <img src={daisy_logo} style={{width: '4vw'}} alt="Logo" />
+        {/* <Typography variant="h4" sx={{color: "black"}}>Daisy</Typography> */}
         <Box sx={{m: 2}}>
           <Link className="nav-link" to="/" sx={{mx: 2}} >Orders</Link>
           <Link className="nav-link" to="/delivering" sx={{mx: 2}} >Delivering</Link>

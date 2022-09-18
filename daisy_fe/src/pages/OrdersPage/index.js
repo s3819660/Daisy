@@ -21,11 +21,23 @@ function Orders(props) {
 
   function fetchOrders() {
     // TODO: Fetch here
-    // fetch("http://localhost:8080/orders/getOrders")
+    fetch("http://localhost:8080/orders/getOrders", {
+      method: "POST",
+      body: JSON.stringify({
+        title: "Title of post",
+        body: "Post Body",
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
   }
 
   function handleConfirmOrder(orderId) {
-    console.log("handleConfirmOrder", orderId)
+    console.log("handleConfirmOrder", orderId);
   }
 
   var orders = [];
