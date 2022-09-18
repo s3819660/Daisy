@@ -174,23 +174,6 @@ class Restaurant extends Nodes {
         }
     }
 
-    static class Shipper extends Nodes {
-        boolean acceptsOrders;
-
-        boolean availableMoreOrders(Restaurant r, double travelTime) {
-            // adding second order
-            double distance = calculateDistance(r.getCoordinates());
-            this.acceptsOrders = (travelTime / r.getWaitingTime() < 1);
-            // adding third order
-
-            return acceptsOrders;
-        }
-
-        @Override
-        void calculateM(Nodes previousNode) {
-
-        }
-    }
 
     static class HeapAlgo {
         // Prints the array
@@ -202,9 +185,9 @@ class Restaurant extends Nodes {
 
         static ArrayList<Nodes[]> pathLists = new ArrayList<>();
         static ArrayList<Nodes[]> filteredNodes = new ArrayList<>();
-        static HashMap<Nodes[], Double> pathWeight = new HashMap<Nodes[], Double>();
+        static HashMap<ArrayList<Nodes>, Double> pathWeight = new HashMap<ArrayList<Nodes>, Double>();
 
-        public static void heapsAlgorithm(int n, Nodes[] list) {
+         void heapsAlgorithm(int n, Nodes[] list) {
             if (n == 1) {
                 pathLists.add(Arrays.copyOf(list, list.length));
                 System.out.println(Arrays.toString(list));
@@ -224,7 +207,7 @@ class Restaurant extends Nodes {
             }
         }
 
-        public static ArrayList<Nodes[]> filterData() {
+        ArrayList<Nodes[]> filterData() {
             int count = 0;
             int pages = 0;
             for (Nodes[] nodeChain : pathLists) {
@@ -262,8 +245,8 @@ class Restaurant extends Nodes {
             Nodes test[] = {a, b, c, d};
             c.setOrderedRestaurant(a);
             d.setOrderedRestaurant(b);
-            heapsAlgorithm(test.length, test);
-            filterData();
+//            heapsAlgorithm(test.length, test);
+//            filterData();
             for (Nodes[] n : filteredNodes) {
                 count++;
 
@@ -275,11 +258,10 @@ class Restaurant extends Nodes {
 
             }
         }
-
         double calculateMEachPath(Nodes[] path) {
             Double totalMValue = 0.0;
             for (Nodes n : path) {
-//            totalMValue += n.calculateM();
+            totalMValue += n.getM();
             }
             pathWeight.put(path, totalMValue);
             return totalMValue;
@@ -293,10 +275,10 @@ class Restaurant extends Nodes {
             return calculateMEachPath(slice);
         }
 
-        Nodes[] mostOptimizedPath() {
+        ArrayList<Nodes> mostOptimizedPath() {
             double minimumMValue = Collections.min(pathWeight.values());
 
-            for (Nodes[] nodeChain : pathWeight.keySet()) {
+            for (ArrayList<Nodes> nodeChain : pathWeight.keySet()) {
                 if (pathWeight.get(nodeChain) == minimumMValue) {
                     return nodeChain;
                 }
@@ -304,7 +286,44 @@ class Restaurant extends Nodes {
             return null;
         }
 
+
     }
 }
 
+ class Shipper extends Nodes {
+    Restaurant currentRestaurantOrder;
+    Restaurant.Customer currentCustomerOrder;
+    boolean acceptsOrders;
+    String address;
+    ArrayList<Nodes> originData;
+    ArrayList<Nodes> filteredData;
+    boolean availableMoreOrders(Restaurant r, double travelTime) {
+        // adding second order
+        double distance = calculateDistance(r.getCoordinates());
+        this.acceptsOrders = (travelTime / r.getWaitingTime() < 1);
+        return acceptsOrders;
+    }
+
+    @Override
+    void calculateM(Nodes previousNode) {
+    }
+
+    // given an order, generate the flow in which another other could be added
+    boolean canAddOrder(Restaurant rest, Restaurant.Customer cust) {
+        while (availableMoreOrders((rest),rest.calculateTravelTime(this.address))){
+            Restaurant.HeapAlgo add = new Restaurant.HeapAlgo();
+            Nodes[] inputCoordination = {rest, cust, currentRestaurantOrder,currentCustomerOrder};
+            add.heapsAlgorithm(inputCoordination.length,inputCoordination);
+           add.filterData();
+           for (Nodes[] nodeChain:add.filterData()) {
+               add.calculateMEachPath(nodeChain);
+           }
+           add.mostOptimizedPath();
+           if (add.mostOptimizedPath() == null) {
+               return false;
+           }
+        }
+        return true;
+    }
+}
 
