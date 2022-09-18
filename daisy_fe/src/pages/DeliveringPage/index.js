@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import OrderCard from "../../components/OrderCard";
-import PackCard from "../../components/PackCard";
 // import PropTypes from 'prop-types';
 
 DeliveringOrders.propTypes = {};
@@ -21,6 +20,10 @@ function DeliveringOrders(props) {
 
   function fetchProcessingOrders() {
     // TODO: Fetch here
+  }
+
+  function handleCompleteOrder(orderId) {
+    console.log(orderId)
   }
 
   var orders = [];
@@ -54,6 +57,7 @@ function DeliveringOrders(props) {
           order={order}
           className="order-card"
           // confirmPack={setSelectedOrder}
+          completeOrder={handleCompleteOrder}
         />
       ))}
     </Box>

@@ -35,12 +35,16 @@ function formatNumber(x) {
 }
 
 function OrderCard(props) {
-  useEffect(() => {
-    console.log(props.order)
-  }, [props])
-
   function handleConfirmOrder() {
     props.confirmOrder(props.order.id);
+  }
+
+  function handleCompleteOrder() {
+    props.completeOrder(props.order.id);
+  }
+
+  function handleStartRoute() {
+    // props.startRoute(props.order.id);
   }
 
   return (
@@ -173,24 +177,44 @@ function OrderCard(props) {
               </Button>
             </ThemeProvider>
           </>
-        ) :           <>
-        <ThemeProvider theme={theme}>
-          <Button
-            disableRipple
-            size="medium"
-            sx={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "grey",
-            }}
-            // onClick={() => handleConfirmOrder()}
-          >
-            Mark as complete
-          </Button>
-        </ThemeProvider>
-      </>}
+        ) : (
+          <>
+            <ThemeProvider theme={theme}>
+              <Box sx={{ display: "flex" }}>
+                <Button
+                  disableRipple
+                  size="medium"
+                  sx={{
+                    width: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                    color: "grey",
+                    px: 0,
+                  }}
+                  onClick={() => handleStartRoute()}
+                >
+                  Start route
+                </Button>
+                <Button
+                  disableRipple
+                  size="medium"
+                  sx={{
+                    width: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                    color: "grey",
+                    px: 0,
+                  }}
+                  onClick={() => handleCompleteOrder()}
+                >
+                  Mark as complete
+                </Button>
+              </Box>
+            </ThemeProvider>
+          </>
+        )}
       </CardContent>
     </Card>
   );
