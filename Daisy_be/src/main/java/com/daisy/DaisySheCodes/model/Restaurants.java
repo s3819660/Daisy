@@ -10,7 +10,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @Entity
 @Table(name = "restaurant")
-public class Restaurants extends Nodes{
+public class Restaurants{
     @Id
     @GeneratedValue
     private Long id;
@@ -22,8 +22,4 @@ public class Restaurants extends Nodes{
     @ToString.Exclude
     private Collection<Orders> orders;
 
-    @Override
-    void calculateM(Nodes previousNode) {
-
-    }
 }
