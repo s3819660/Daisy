@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import OrderCard from "../../components/OrderCard";
 
@@ -7,17 +7,28 @@ import OrderCard from "../../components/OrderCard";
 Orders.propTypes = {};
 
 function Orders(props) {
+  const [selectedOrder, setSelectedOrder] = useState(0);
+
   useEffect(() => {
     fetchOrders();
   }, [])
 
+  useEffect(() => {
+    if (!selectedOrder) return;
+
+    // TODO: Confirm order here 
+
+  }, [selectedOrder])
+
   function fetchOrders() {
-    // Fetch here
+    // TODO: Fetch here
+    
   }
 
   var orders = [];
   for (var i = 0; i < 10; i++) {
     orders.push({
+      id: i,
       customer: `customer name ${i + 1}`,
       restaurant: `restaurant name ${i + 1}`,
       pickUpPoint: `pick up point ${i + 1}`,
@@ -44,6 +55,7 @@ function Orders(props) {
           key={`order-${index}`}
           order={order}
           className="order-card"
+          confirmOrder={setSelectedOrder}
         />
       ))}
     </Box>

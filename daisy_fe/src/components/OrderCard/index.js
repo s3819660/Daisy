@@ -35,6 +35,10 @@ function formatNumber(x) {
 }
 
 function OrderCard(props) {
+  function handleConfirmOrder() {
+    props.confirmOrder(props.order.id);
+  }
+
   return (
     <Card sx={{ width: "40vw", marginBottom: "1rem" }}>
       <CardContent>
@@ -147,6 +151,7 @@ function OrderCard(props) {
               justifyContent: "center",
               color: "grey",
             }}
+            onClick={() => handleConfirmOrder()}
           >
             Accept order
           </Button>
