@@ -1,5 +1,14 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
+import org.apache.commons.httpclient.util.URIUtil;
+
+import org.json.*;
 public class HamiltonianProblem {
     public static void main(String args[]) {
         ArrayList<Nodes> nodes = new ArrayList<>();
@@ -14,7 +23,10 @@ abstract class Nodes {
     private double distance;
     private String address;
     private double[] coordinates; // (coordinates x,y) of the location used for calculating distance
-
+    private String name;
+    private double M;
+    private double waitingTime;
+    private double travelTime;
     public double getDistance() {
         return distance;
     }
@@ -33,15 +45,78 @@ abstract class Nodes {
         double y2 = array2[0];
         return Math.sqrt(Math.pow((x2-x1),2)+Math.pow((y2-y1),2));
     }
+    abstract void calculateM(Nodes previousNode);
+    public double getM() {
+        return M;
+    }
+    int calculateTravelTime(String nextAddress) {
+        try{
+            // write your code here
+            URL url = new URL(
+                    "https://maps.googleapis.com/maps/api/distancematrix/json?destinations=" +
+                            URIUtil.encodeQuery(this.address) + "&origins=" +
+                            URIUtil.encodeQuery(nextAddress) + "&key=AIzaSyCr5QPYztOCLdfbJizK0-v6S49PLsZwl24");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+            }
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+            String output = "", full = "";
+            while ((output = br.readLine()) != null) {
+                System.out.println(output);
+                full += output;
+                String jsonString = output;
+                JSONObject obj = new JSONObject(jsonString);
+                JSONArray arr = obj.getJSONArray("rows");
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONArray newObj = obj.getJSONArray("elements");
+                    for (int j = 0; j<newObj.length(); j++) {
+                        JSONObject distanceObj = obj.getJSONObject("duration");
+                        for (int x = 0; x < distanceObj.length();x++) {
+                            JSONObject duration = distanceObj.getJSONObject("text");
+                            String durationString = duration.toString();
+                            String[] splited = durationString.split(" ");
+                            int timeTravel = Integer.parseInt(splited[0]);
+                            this.travelTime = timeTravel;
+                            return timeTravel;
+                        }
+                    }
+                }
+            }
+
+            conn.disconnect();
+        }
+        catch (NullPointerException e) {
+            System.out.println("Address, latitude on longitude is null");
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+
+    public String getName() {
+        return name;
+    }
 
 }
 class Restaurant extends Nodes {
     private double waitingTime;
     private double[] coordinates;
+    private double M;
+    private double travelTime;
 
-    double calculateM(double[] originCoordinates){
-        double distance = calculateDistance(originCoordinates);
-        return waitingTime - distance <= 0 ? distance : waitingTime - distance;
+    private String name;
+
+    public Restaurant(String name) {
+        this.name = name;
     }
 
     public double getWaitingTime() {
@@ -52,217 +127,184 @@ class Restaurant extends Nodes {
     public double[] getCoordinates() {
         return coordinates;
     }
-}
-class Customer extends Nodes {
-    private Restaurant orderedRestaurant;
 
-    public Restaurant getOrderedRestaurant() {
-        return orderedRestaurant;
+
+    @Override
+    void calculateM(Nodes previousNode) {
+        double travelTime = calculateTravelTime(previousNode.getAddress());
+
+        this.M = waitingTime - travelTime <= 0 ? travelTime : waitingTime - travelTime;
     }
 
-    public void setOrderedRestaurant(Restaurant orderedRestaurant) {
-        this.orderedRestaurant = orderedRestaurant;
+    public String getName() {
+        return name;
     }
-}
-class E {
 
-}
-class Shipper extends Nodes {
-    ArrayList<Nodes> nodesCollection; // collection of restaurants and customer nodes ongoing for shipper
-    Queue<Nodes> pathOrder = new PriorityQueue<>();
-    ArrayList<Nodes> visited = new ArrayList<>();
-    ArrayList<Nodes> unvisited = new ArrayList<>();
+    static class Customer extends Nodes {
+        private Restaurant orderedRestaurant;
+        private String name;
+        private double waitingTime = 0;
+        private double M;
 
-
-    // if the target node is a customer, only add if we've visited the customer.restaurant
-    boolean acceptsOrders;
-
-    boolean availableMoreOrders(Restaurant r) {
-        double distance = calculateDistance(r.getCoordinates());
-        this.acceptsOrders = (distance / r.getWaitingTime() > 1);
-        return acceptsOrders;
-    }
-}
-
-class HeapAlgo {
-    // Prints the array
-    void printArr(Nodes a[], int n)
-    {
-        for (int i = 0; i < n; i++)
-            System.out.print(a[i] + " ");
-        System.out.println();
-    }
-    static ArrayList<Nodes[]> pathLists = new ArrayList<>();
-    static ArrayList<Nodes[]> filteredNodes = new ArrayList<>();
-
-    public static void heapsAlgorithm(int n, Nodes[] list) {
-        if (n == 1) {
-            pathLists.add(Arrays.copyOf(list, list.length));
-            System.out.println(Arrays.toString(list));
+        public Customer(Restaurant orderedRestaurant, String name) {
+            this.orderedRestaurant = orderedRestaurant;
+            this.name = name;
         }
-        else {
-            for(int i = 0; i < n; i++) {
-                heapsAlgorithm(n - 1, list);
-                if ( n % 2 == 0) {
-                    Nodes swap = list[i];
-                    list[i] = list[n-1];
-                    list[n-1] = swap;
-                }
-                else {
-                    Nodes swap = list[0];
-                    list[0] = list[n-1];
-                    list[n-1] = swap;
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        void calculateM(Nodes previousNode) {
+            double travelTime = calculateTravelTime(previousNode.getAddress());
+            this.M = waitingTime - travelTime <= 0 ? travelTime : waitingTime - travelTime;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Restaurant getOrderedRestaurant() {
+            return orderedRestaurant;
+        }
+
+        public void setOrderedRestaurant(Restaurant orderedRestaurant) {
+            this.orderedRestaurant = orderedRestaurant;
+        }
+    }
+
+    static class Shipper extends Nodes {
+        boolean acceptsOrders;
+
+        boolean availableMoreOrders(Restaurant r, double travelTime) {
+            // adding second order
+            double distance = calculateDistance(r.getCoordinates());
+            this.acceptsOrders = (travelTime / r.getWaitingTime() < 1);
+            // adding third order
+
+            return acceptsOrders;
+        }
+
+        @Override
+        void calculateM(Nodes previousNode) {
+
+        }
+    }
+
+    static class HeapAlgo {
+        // Prints the array
+        void printArr(Nodes a[], int n) {
+            for (int i = 0; i < n; i++)
+                System.out.print(a[i] + " ");
+            System.out.println();
+        }
+
+        static ArrayList<Nodes[]> pathLists = new ArrayList<>();
+        static ArrayList<Nodes[]> filteredNodes = new ArrayList<>();
+        static HashMap<Nodes[], Double> pathWeight = new HashMap<Nodes[], Double>();
+
+        public static void heapsAlgorithm(int n, Nodes[] list) {
+            if (n == 1) {
+                pathLists.add(Arrays.copyOf(list, list.length));
+                System.out.println(Arrays.toString(list));
+            } else {
+                for (int i = 0; i < n; i++) {
+                    heapsAlgorithm(n - 1, list);
+                    if (n % 2 == 0) {
+                        Nodes swap = list[i];
+                        list[i] = list[n - 1];
+                        list[n - 1] = swap;
+                    } else {
+                        Nodes swap = list[0];
+                        list[0] = list[n - 1];
+                        list[n - 1] = swap;
+                    }
                 }
             }
         }
-    }
-     public static ArrayList<Nodes[]> filterData() {
-        int count = 0;
-        int pages = 0;
-         for (Nodes[] nodeChain:pathLists) {
-             for (Nodes node : nodeChain) {
-                 if (node instanceof Customer) {
-                     int index = Arrays.asList(nodeChain).indexOf(node);
-                     int jindex = Arrays.asList(nodeChain).indexOf(((Customer) node).getOrderedRestaurant());
-                     if(index == 0) {
-                         break;}
-                     else {
-                         count++;
-                         System.out.println(count+" this statement khac 0");
-                         if (index > jindex) {
-                             pages++;
-                             filteredNodes.add(nodeChain);
-                             System.out.println(pages +" this statement satisfies both conditions");
-                             break;
-                         }
-//                         pathLists.remove(nodeChain);
-//                         System.out.println(count+" This string is error");
-//                         System.out.println("Line "+ count);
-//                         System.out.println("Customer"+index + " " + "Restaurant"+jindex);
-                     }
 
-//                     pages++;
-//                     System.out.println("Line "+ pages);
-//                     System.out.println("Customer"+index + " " + "Restaurant"+jindex);
-//                    return Arrays.asList(nodeChain).contains(node);
-//                    return Arrays.asList(nodeChain).contains(((Customer) node).getOrderedRestaurant());
-
-                 }
-             }
-         }
-         return filteredNodes;
-     }
-
-
-
-    // Driver code
-    public static void main(String args[])
-    {
-        HeapAlgo obj = new HeapAlgo();
-        Restaurant a = new Restaurant();
-        Restaurant b = new Restaurant();
-        Customer c = new Customer();
-        Customer d = new Customer();
-        Shipper z = new Shipper();
-
-
-        Nodes test[] = {a,b,c,d};
-        c.setOrderedRestaurant(a);
-        d.setOrderedRestaurant(b);
-        heapsAlgorithm(test.length,test);
-        filterData();
-        for(int i = 1; i <= filteredNodes.size(); i++) {
-//            System.out.println("Filtered Data");
-            System.out.println("List " + i + ": " + Arrays.toString(filteredNodes.get(i-1)));
+        public static ArrayList<Nodes[]> filterData() {
+            int count = 0;
+            int pages = 0;
+            for (Nodes[] nodeChain : pathLists) {
+                boolean canAdd = true;
+                for (Nodes node : nodeChain) {
+                    if (node instanceof Customer) {
+                        int index = Arrays.asList(nodeChain).indexOf(node);
+                        int jindex = Arrays.asList(nodeChain).indexOf(((Customer) node).getOrderedRestaurant());
+                        if (index == 0) {
+                            canAdd = false;
+                            break;
+                        } else {
+                            if (index < jindex) {
+                                canAdd = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (canAdd) {
+                    filteredNodes.add(nodeChain);
+                }
+            }
+            return filteredNodes;
         }
-//        System.out.println(filterData());
+
+        public static void main(String args[]) {
+            HeapAlgo obj = new HeapAlgo();
+            Restaurant a = new Restaurant("Restaurant A");
+            Restaurant b = new Restaurant("Restaurant B");
+            Customer c = new Customer(a, "My");
+            Customer d = new Customer(b, "Linh");
+            Shipper z = new Shipper();
+            int count = 0;
+            Nodes test[] = {a, b, c, d};
+            c.setOrderedRestaurant(a);
+            d.setOrderedRestaurant(b);
+            heapsAlgorithm(test.length, test);
+            filterData();
+            for (Nodes[] n : filteredNodes) {
+                count++;
+
+                System.out.println(count + " Line: ");
+                for (Nodes m : n) {
+                    System.out.println(m.getName());
+                }
+                System.out.println("-----");
+
+            }
+        }
+
+        double calculateMEachPath(Nodes[] path) {
+            Double totalMValue = 0.0;
+            for (Nodes n : path) {
+//            totalMValue += n.calculateM();
+            }
+            pathWeight.put(path, totalMValue);
+            return totalMValue;
+        }
+
+        double calculateCustomerWaitTime(Nodes current, Nodes destination, Nodes[] path) {
+            int startingIndex = Arrays.asList(path).indexOf(current);
+            int endingIndex = Arrays.asList(path).indexOf(destination);
+
+            Nodes[] slice = Arrays.copyOfRange(path, startingIndex, endingIndex);
+            return calculateMEachPath(slice);
+        }
+
+        Nodes[] mostOptimizedPath() {
+            double minimumMValue = Collections.min(pathWeight.values());
+
+            for (Nodes[] nodeChain : pathWeight.keySet()) {
+                if (pathWeight.get(nodeChain) == minimumMValue) {
+                    return nodeChain;
+                }
+            }
+            return null;
+        }
+
     }
 }
 
-
-
-//    void addNodeToPath(Nodes targetNode) {
-//        pathOrder.add(targetNode);
-//        unvisited.remove(targetNode);
-//        visited.remove(targetNode);
-//    }
-//    ArrayList<Nodes> listAllPaths() {
-//        unvisited.addAll(nodesCollection); // add all nodes value to unvisited nodes list
-//        boolean canAdd = false;
-//        for (Nodes targetNode:unvisited) {
-//            if (targetNode instanceof Customer && unvisited.contains(((Customer) targetNode))) {
-//                continue;
-//            }
-//            else {
-//                addNodeToPath(targetNode);
-//            }
-//        }
-//    }
-//    void listAllPaths(int n, ArrayList<Nodes> unvistedNodes, char delimiter) {
-//        unvisited.addAll(nodesCollection); // add all nodes value to unvisited nodes list
-//        if (n==1) {
-//            listArray(unvistedNodes);
-//        }
-//        else {
-//            for(int i = 0; i < n - 1; i++) {
-//                listAllPaths(n-1, unvisited ,delimiter);
-//                if (n%2 == 0) {
-//                    swap(unvistedNodes,i,n-1);
-//                }
-//                else {
-//                    swap(unvistedNodes,0,n-1);
-//                }
-//                listAllPaths(n-1,unvistedNodes,delimiter);
-//            }
-//        }
-//    }
-//    void listArray(ArrayList<Nodes> input) {
-//        for (int i =0; i < input.size();i++) {
-//            System.out.println(input.get(i));
-//        }
-//    }
-//    private void swap(ArrayList<Nodes> input, int a, int b) {
-//        Nodes tmp = input.get(a);
-//        input.set(a, input.get(b));
-//        input.set(b, tmp);
-//private void swap(T[] input, int a, int b) {
-//    T tmp = input[a];
-//    input[a] = input[b];
-//    input[b] = tmp;
-//}
-//
-//    private static void printArray(T[] input) {
-//        System.out.print('\n');
-//        for(int i = 0; i < input.length; i++) {
-//            System.out.print(input[i]);
-//        }
-//    }
-//    public static <T> void printAllRecursive(
-//            int n, T[] elements, char delimiter) {
-//
-//        if(n == 1) {
-//            printArray((com.company.T[]) elements);
-//        } else {
-//            for(int i = 0; i < n-1; i++) {
-//                printAllRecursive(n - 1, elements, delimiter);
-//                if(n % 2 == 0) {
-//                    swap(elements, i, n-1);
-//                } else {
-//                    swap(elements, 0, n-1);
-//                }
-//            }
-//            printAllRecursive(n - 1, elements, delimiter);
-//        }
-//    }
-//
-//}
-
-class T{
-
-}
-class Paths {
-    ArrayList<Nodes> pathCollection = new ArrayList<>();
-
-
-}
 
