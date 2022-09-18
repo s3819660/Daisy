@@ -13,7 +13,7 @@ function NavigationBar(props) {
         <Typography variant="h4">Navbar</Typography>
         <div>
           <Link to="/">Orders</Link>
-          <Link to="/processing">Processing</Link>
+          <Link to="/delivering">Delivering</Link>
           <Link to="/history">History</Link>
         </div>
       </Toolbar>
@@ -22,7 +22,7 @@ function NavigationBar(props) {
   //   return (
   //     <div>
 
-  //       <Link to="/processing">Processing</Link>
+  //       <Link to="/delivering">Delivering</Link>
   //       <Link to="/history">History</Link>
   //     </div>
   //   );
