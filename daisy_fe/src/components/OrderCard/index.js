@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -8,7 +8,7 @@ import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import PropTypes from "prop-types";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import "./style.css"
+import "./style.css";
 
 const theme = createTheme({
   palette: {
@@ -35,6 +35,10 @@ function formatNumber(x) {
 }
 
 function OrderCard(props) {
+  useEffect(() => {
+    console.log(props.order)
+  }, [props])
+
   function handleConfirmOrder() {
     props.confirmOrder(props.order.id);
   }
@@ -67,7 +71,7 @@ function OrderCard(props) {
             {props.order.customer}
           </Box>
         </Typography>
-        <Divider />
+        <Divider sx={{ background: "#F5F5F5" }} />
         <Box
           sx={{
             width: "100%",
@@ -78,21 +82,21 @@ function OrderCard(props) {
           }}
         >
           <Typography
-            sx={{ width: "50%", display: "flex", justifyContent: "flex-start" }}
+            sx={{ width: "80%", display: "flex", justifyContent: "flex-start" }}
             variant="h6"
             color="text.secondary"
           >
             <b>{props.order.restaurant}</b>
           </Typography>
           <Typography
-            sx={{ width: "50%", display: "flex", justifyContent: "flex-end" }}
+            sx={{ width: "20%", display: "flex", justifyContent: "flex-end" }}
             variant="body2"
             color="text.secondary"
           >
             {"2.5km"}
           </Typography>
         </Box>
-        <Divider />
+        <Divider sx={{ background: "#F5F5F5" }} />
         <Box
           sx={{
             width: "100%",
@@ -100,7 +104,7 @@ function OrderCard(props) {
             flexDirection: "column",
             justifyContent: "flex-start",
             alignItems: "flex-start",
-            my: 1
+            my: 1,
           }}
         >
           <Typography variant="caption" color="text.secondary">
@@ -116,10 +120,15 @@ function OrderCard(props) {
             702 Nguyễn Văn Linh, P. Tân Phong, Q.7, TP.HCM
           </Typography>
         </Box>
-        <Divider />
-        <Box sx={{ display: "flex"}}>
+        <Divider sx={{ background: "#F5F5F5" }} />
+        <Box sx={{ display: "flex" }}>
           <Typography
-            sx={{ width: "50%", display: "flex", justifyContent: "flex-start", my: 1 }}
+            sx={{
+              width: "50%",
+              display: "flex",
+              justifyContent: "flex-start",
+              my: 1,
+            }}
             variant="body2"
             color="text.secondary"
           >
@@ -129,7 +138,12 @@ function OrderCard(props) {
             </b>
           </Typography>
           <Typography
-            sx={{ width: "50%", display: "flex", justifyContent: "flex-end", my: 1 }}
+            sx={{
+              width: "50%",
+              display: "flex",
+              justifyContent: "flex-end",
+              my: 1,
+            }}
             variant="body2"
             color="text.secondary"
           >
@@ -139,7 +153,27 @@ function OrderCard(props) {
             </b>
           </Typography>
         </Box>
-        <Divider />
+        <Divider sx={{ background: "#F5F5F5" }} />
+        {props.confirmButton ? (
+          <>
+            <ThemeProvider theme={theme}>
+              <Button
+                disableRipple
+                size="medium"
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "grey",
+                }}
+                onClick={() => handleConfirmOrder()}
+              >
+                Accept order
+              </Button>
+            </ThemeProvider>
+          </>
+        ) :           <>
         <ThemeProvider theme={theme}>
           <Button
             disableRipple
@@ -151,11 +185,12 @@ function OrderCard(props) {
               justifyContent: "center",
               color: "grey",
             }}
-            onClick={() => handleConfirmOrder()}
+            // onClick={() => handleConfirmOrder()}
           >
-            Accept order
+            Mark as complete
           </Button>
         </ThemeProvider>
+      </>}
       </CardContent>
     </Card>
   );
