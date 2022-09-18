@@ -6,24 +6,25 @@ import OrderCard from "../../components/OrderCard";
 DeliveringOrders.propTypes = {};
 
 function DeliveringOrders(props) {
-  const [selectedOrder, setSelectedOrder] = useState(0);
+  // const [selectedOrder, setSelectedOrder] = useState(0);
 
   useEffect(() => {
     fetchProcessingOrders();
   }, []);
 
-  useEffect(() => {
-    if (!selectedOrder) return;
+  // useEffect(() => {
+  //   if (!selectedOrder) return;
 
-    // TODO: Confirm pack here
-  }, [selectedOrder]);
+  //   // TODO: Confirm pack here
+  // }, [selectedOrder]);
 
   function fetchProcessingOrders() {
     // TODO: Fetch here
   }
 
   function handleCompleteOrder(orderId) {
-    console.log(orderId)
+    // TODO: complete order
+    console.log("handleCompleteOrder", orderId)
   }
 
   var orders = [];

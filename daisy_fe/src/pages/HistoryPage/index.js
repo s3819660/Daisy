@@ -1,5 +1,6 @@
+import { Box } from "@mui/material";
 import React, { useEffect } from "react";
-import OrderCard from "../../components/OrderCard";
+import HistoryOrderCard from "../../components/HistoryOrderCard";
 // import PropTypes from 'prop-types';
 
 History.propTypes = {};
@@ -20,19 +21,27 @@ function History(props) {
       restaurant: `restaurant name ${i + 1}`,
       pickUpPoint: `pick up point ${i + 1}`,
       destination: `destination ${i + 1}`,
-      payment: 10,
-      total: 20,
+      payment: 15000,
+      total: 20000,
       createdOn: Date(),
     });
   }
 
   return (
-    <div>
-      history
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 2,
+        m: 2,
+      }}
+    >
       {orders.map((order, index) => (
-        <OrderCard key={`order-${index}`} order={order} />
+        <HistoryOrderCard key={`order-${index}`} order={order} />
       ))}
-    </div>
+    </Box>
   );
 }
 

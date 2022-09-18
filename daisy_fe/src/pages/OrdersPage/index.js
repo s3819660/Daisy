@@ -7,20 +7,24 @@ import OrderCard from "../../components/OrderCard";
 Orders.propTypes = {};
 
 function Orders(props) {
-  const [selectedOrder, setSelectedOrder] = useState(0);
+  // const [selectedOrder, setSelectedOrder] = useState(-1);
 
   useEffect(() => {
     fetchOrders();
   }, []);
 
-  useEffect(() => {
-    if (!selectedOrder) return;
-
-    // TODO: Confirm order here
-  }, [selectedOrder]);
+  // useEffect(() => {
+  //   if (selectedOrder > -1) return;
+  //   console.log("dds", selectedOrder)
+  //   // TODO: Confirm order here
+  // }, [selectedOrder]);
 
   function fetchOrders() {
     // TODO: Fetch here
+  }
+
+  function handleConfirmOrder(orderId) {
+    console.log("handleConfirmOrder", orderId)
   }
 
   var orders = [];
@@ -53,7 +57,7 @@ function Orders(props) {
           key={`order-${index}`}
           order={order}
           className="order-card"
-          confirmOrder={setSelectedOrder}
+          confirmOrder={handleConfirmOrder}
           confirmButton={true}
         />
       ))}
