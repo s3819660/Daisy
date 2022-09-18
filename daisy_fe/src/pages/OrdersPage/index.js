@@ -21,6 +21,7 @@ function Orders(props) {
 
   function fetchOrders() {
     // TODO: Fetch here
+    fetch("http://localhost:8080/orders/getOrders")
   }
 
   var orders = [];

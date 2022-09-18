@@ -15,6 +15,7 @@ public class OrderService {
     public List<Orders> getOrders(){
         List<Orders> orders = orderRepository.findAllByMarkCompletedIsFalseAndShipperIsNull();
 
+        System.out.println(orders.size());
         // if the result list is equal to 0 , meaning the shipper does not receive any order.
         if(orders.size() == 0 ){
             return orders;
