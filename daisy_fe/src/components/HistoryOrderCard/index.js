@@ -8,7 +8,7 @@ import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import PropTypes from "prop-types";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import "./style.css";
+// import "./style.css";
 
 const theme = createTheme({
   palette: {
@@ -19,7 +19,7 @@ const theme = createTheme({
   },
 });
 
-OrderCard.propTypes = {
+HistoryOrderCard.propTypes = {
   order: PropTypes.shape({
     customer: PropTypes.string,
     restaurant: PropTypes.string,
@@ -34,7 +34,7 @@ function formatNumber(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function OrderCard(props) {
+function HistoryOrderCard(props) {
   function handleConfirmOrder() {
     props.confirmOrder(props.order.id);
   }
@@ -158,66 +158,41 @@ function OrderCard(props) {
           </Typography>
         </Box>
         <Divider sx={{ background: "#F5F5F5" }} />
-        {props.confirmButton ? (
-          <>
-            <ThemeProvider theme={theme}>
-              <Button
-                disableRipple
-                size="medium"
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "grey",
-                }}
-                onClick={() => handleConfirmOrder()}
-              >
-                Accept order
-              </Button>
-            </ThemeProvider>
-          </>
-        ) : (
-          <>
-            <ThemeProvider theme={theme}>
-              <Box sx={{ display: "flex" }}>
-                <Button
-                  disableRipple
-                  size="medium"
-                  sx={{
-                    width: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    color: "grey",
-                    px: 0,
-                  }}
-                  onClick={() => handleStartRoute()}
-                >
-                  Start route
-                </Button>
-                <Button
-                  disableRipple
-                  size="medium"
-                  sx={{
-                    width: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    color: "grey",
-                    px: 0,
-                  }}
-                  onClick={() => handleCompleteOrder()}
-                >
-                  Mark as complete
-                </Button>
-              </Box>
-            </ThemeProvider>
-          </>
-        )}
+        <ThemeProvider theme={theme}>
+          <Box sx={{ display: "flex" }}>
+            <Button
+              disableRipple
+              size="medium"
+              sx={{
+                width: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                color: "grey",
+                px: 0,
+              }}
+            >
+              {/* Rating Stars */}
+            </Button>
+            <Typography
+              sx={{
+                width: "50%",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                m: 1
+              }}
+              variant="caption"
+              color="text.secondary"
+            >
+              Completed
+            </Typography>
+          </Box>
+        </ThemeProvider>
       </CardContent>
     </Card>
   );
 }
 
-export default OrderCard;
+export default HistoryOrderCard;
