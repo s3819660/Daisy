@@ -7,6 +7,17 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import PropTypes from "prop-types";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import "./style.css"
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#A4A4A4",
+      darker: "#A4A4A4",
+    },
+  },
+});
 
 OrderCard.propTypes = {
   order: PropTypes.shape({
@@ -85,6 +96,7 @@ function OrderCard(props) {
             flexDirection: "column",
             justifyContent: "flex-start",
             alignItems: "flex-start",
+            my: 1
           }}
         >
           <Typography variant="caption" color="text.secondary">
@@ -101,9 +113,9 @@ function OrderCard(props) {
           </Typography>
         </Box>
         <Divider />
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex"}}>
           <Typography
-            sx={{ width: "50%", display: "flex", justifyContent: "flex-start" }}
+            sx={{ width: "50%", display: "flex", justifyContent: "flex-start", my: 1 }}
             variant="body2"
             color="text.secondary"
           >
@@ -113,7 +125,7 @@ function OrderCard(props) {
             </b>
           </Typography>
           <Typography
-            sx={{ width: "50%", display: "flex", justifyContent: "flex-end" }}
+            sx={{ width: "50%", display: "flex", justifyContent: "flex-end", my: 1 }}
             variant="body2"
             color="text.secondary"
           >
@@ -123,22 +135,23 @@ function OrderCard(props) {
             </b>
           </Typography>
         </Box>
+        <Divider />
+        <ThemeProvider theme={theme}>
+          <Button
+            disableRipple
+            size="medium"
+            sx={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "grey",
+            }}
+          >
+            Accept order
+          </Button>
+        </ThemeProvider>
       </CardContent>
-      <Divider />
-      <CardActions>
-        <Button
-          size="medium"
-          sx={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "grey",
-          }}
-        >
-          Accept order
-        </Button>
-      </CardActions>
     </Card>
   );
 }
