@@ -5,6 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import Box from "@mui/material/Box";
 import PropTypes from "prop-types";
 
 OrderCard.propTypes = {
@@ -15,39 +16,124 @@ OrderCard.propTypes = {
     destination: PropTypes.string,
     payment: PropTypes.number,
     total: PropTypes.number,
-    createdOn: PropTypes.instanceOf(Date),
   }),
 };
 
+function formatNumber(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function OrderCard(props) {
   return (
-    <Card sx={{ maxWidth: "60vh", marginBottom: "1rem" }}>
+    <Card sx={{ width: "40vw", marginBottom: "1rem" }}>
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          <b>created on: </b>
-          {props.order.createdOn}
-        </Typography>
-        <Typography gutterBottom variant="h5" component="div">
-          <b>customer: </b>
-          {props.order.customer}
+        <Typography
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
+          variant="caption"
+          color="text.secondary"
+        >
+          <Box
+            sx={{ width: "50%", display: "flex", justifyContent: "flex-start" }}
+          >
+            {props.order.createdOn.substring(
+              props.order.createdOn.indexOf(" "),
+              props.order.createdOn.indexOf("GMT")
+            )}
+          </Box>
+          <Box
+            sx={{ width: "50%", display: "flex", justifyContent: "flex-end" }}
+          >
+            {props.order.customer}
+          </Box>
         </Typography>
         <Divider />
-        <Typography variant="body2" color="text.secondary">
-          <b>restaurant: </b>
-          {props.order.restaurant}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <b>payment: </b>${props.order.payment}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <b>total: </b>${props.order.total}
-        </Typography>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
+        >
+          <Typography
+            sx={{ width: "50%", display: "flex", justifyContent: "flex-start" }}
+            variant="h6"
+            color="text.secondary"
+          >
+            <b>{props.order.restaurant}</b>
+          </Typography>
+          <Typography
+            sx={{ width: "50%", display: "flex", justifyContent: "flex-end" }}
+            variant="body2"
+            color="text.secondary"
+          >
+            {"2.5km"}
+          </Typography>
+        </Box>
+        <Divider />
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+          }}
+        >
+          <Typography variant="caption" color="text.secondary">
+            <b>Pick Up Point</b>
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            12/25A Trần Xuân Soạn, P. Tân Hưng, Q. 7
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            <b>Destination</b>
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            702 Nguyễn Văn Linh, P. Tân Phong, Q.7, TP.HCM
+          </Typography>
+        </Box>
+        <Divider />
+        <Box sx={{ display: "flex" }}>
+          <Typography
+            sx={{ width: "50%", display: "flex", justifyContent: "flex-start" }}
+            variant="body2"
+            color="text.secondary"
+          >
+            Payment:
+            <b style={{ marginLeft: "5px" }}>
+              {formatNumber(props.order.payment)}VND
+            </b>
+          </Typography>
+          <Typography
+            sx={{ width: "50%", display: "flex", justifyContent: "flex-end" }}
+            variant="body2"
+            color="text.secondary"
+          >
+            Total:
+            <b style={{ marginLeft: "5px" }}>
+              {formatNumber(props.order.total)}VND
+            </b>
+          </Typography>
+        </Box>
       </CardContent>
+      <Divider />
       <CardActions>
         <Button
           size="medium"
           sx={{
-            textTransform: "none",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "grey",
           }}
         >
           Accept order

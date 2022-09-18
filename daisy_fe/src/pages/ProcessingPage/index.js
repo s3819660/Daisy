@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import OrderCard from "../../components/OrderCard";
 // import PropTypes from 'prop-types';
 
 ProcessingOrders.propTypes = {};
 
 function ProcessingOrders(props) {
+  useEffect(() => {
+    fetchProcessingOrders();
+  }, []);
+
+  function fetchProcessingOrders() {
+    // Fetch here
+  }
+
   var orders = [];
   for (var i = 0; i < 10; i++) {
     orders.push({

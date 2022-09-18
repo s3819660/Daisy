@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import OrderCard from "../../components/OrderCard";
 
@@ -7,6 +7,14 @@ import OrderCard from "../../components/OrderCard";
 Orders.propTypes = {};
 
 function Orders(props) {
+  useEffect(() => {
+    fetchOrders();
+  }, [])
+
+  function fetchOrders() {
+    // Fetch here
+  }
+
   var orders = [];
   for (var i = 0; i < 10; i++) {
     orders.push({
@@ -14,8 +22,8 @@ function Orders(props) {
       restaurant: `restaurant name ${i + 1}`,
       pickUpPoint: `pick up point ${i + 1}`,
       destination: `destination ${i + 1}`,
-      payment: 10,
-      total: 20,
+      payment: 58000,
+      total: 189000,
       createdOn: Date(),
     });
   }
