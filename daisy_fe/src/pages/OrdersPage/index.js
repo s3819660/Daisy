@@ -21,7 +21,7 @@ function Orders(props) {
 
   function fetchOrders() {
     // TODO: Fetch here
-    fetch("http://localhost:8080/orders/getOrders")
+    // fetch("http://localhost:8080/orders/getOrders")
   }
 
   function handleConfirmOrder(orderId) {
