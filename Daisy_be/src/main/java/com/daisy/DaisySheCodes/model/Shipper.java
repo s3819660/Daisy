@@ -12,12 +12,10 @@ public class Shipper {
     @Id
     @GeneratedValue
     private Long id;
+    private String shipper_name;
 
-    private String name;
-    private String address;
-
-//    @OneToMany(mappedBy = "shipper", cascade = CascadeType.ALL)
-//    @EqualsAndHashCode.Exclude
-//    @ToString.Exclude
-//    private Collection<Order> orders;
+    @OneToMany(mappedBy = "shipper", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Collection<Orders> orders;
 }

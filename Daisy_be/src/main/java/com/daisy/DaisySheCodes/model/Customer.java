@@ -21,8 +21,8 @@ public class Customer {
     @Column(name = "Cutomer_address")
     private String address;
 
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-//    @EqualsAndHashCode.Exclude
-//    @ToString.Exclude
-//    private Collection<Order> orders;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Collection<Orders> orders;
 }

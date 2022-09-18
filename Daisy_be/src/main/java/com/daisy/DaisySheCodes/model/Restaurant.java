@@ -14,12 +14,12 @@ public class Restaurant {
     @Id
     @GeneratedValue
     private Long id;
+    private String restaurant_name;
+    private String address;
 
-    String name;
-    String address;
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Collection<Orders> orders;
 
-//    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-//    @EqualsAndHashCode.Exclude
-//    @ToString.Exclude
-//    private Collection<Order> orders;
 }
